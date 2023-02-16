@@ -65,33 +65,14 @@ function bigE(state1,state2)
     bigE/length(state1)
 end
 
-function getProbs(grid,pos,neighbours,temp)
-    probs=ones(Float64,4)
-    for i in 1:4
-        thisE=bigE(grid[neighbours[i][1],neighbours[i][2]],grid[pos[1],pos[2]])
-        probs[i]=exp(-thisE/temp)
-    end
+function getBest(grid,pos,neighbours)
 
-    bigZ=sum(probs)
+    eValues=[bigE(grid[neighbours[i][1],neighbours[i][2]],grid[pos[1],pos[2]]) for i in 1:length(neighbours)]
+        
+    best=minimum(eValues)
+
+    rand([i if eValues[i]==best for i in 1:length(neighbours)])
     
-    for i in 1:4
-        probs[i]/=bigZ
-    end
-
-    probs
-end
-
-function makeCloser(updated,updater)
-    if (updated==updater)
-        return updated
-    end
-
-    differences=updated.*updater
-    differenceI=findall(x->x==-1,differences)
-    change=rand(differenceI)
-    updated[change]=updater[change]
-
-    updated
 end
 
 function plotGrid(grid, filename; kwargs...)
@@ -155,8 +136,7 @@ temp=0.1
 for t in 1:tFinal
     r=pick(gridSize)
     neighbours=getNeighbours(gridSize,r)
-    probs=getProbs(grid,r,neighbours,temp)
-    neighbour=rand(Categorical(probs))
+    neighbour=getProbs(grid,r,neighbours)
     grid[r[1],r[2]]=makeCloser(grid[r[1],r[2]],grid[neighbours[neighbour][1],neighbours[neighbour][2]])
     if t%10000==0
         counts=countTypes(grid)
