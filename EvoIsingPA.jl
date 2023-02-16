@@ -1,5 +1,6 @@
 using Random,Distributions
-using PlotlyJS
+using Plots
+plotlyjs()
 
 
 struct GridSize
@@ -71,11 +72,16 @@ function getBest(grid,pos,neighbours)
         
     best=minimum(eValues)
 
-    rand([i if eValues[i]==best for i in 1:length(neighbours)])
+    rand([i  for i in 1:length(neighbours) if eValues[i]==best])
     
 end
 
 function plotGrid(grid, filename; kwargs...)
+    p=plotGrid(grid; kwards...)
+    savefig(p, filename)
+end
+
+function plotGrid(grid; kwargs...)
     
     sizeG=size(grid)
     
@@ -87,13 +93,14 @@ function plotGrid(grid, filename; kwargs...)
         end
     end
 
-    p=plot(
-    heatmap(z=s,
+    Plots.heatmap(s,
             colorbar = false, axis = false
             )
-    )
-    savefig(p, filename)
+    
+    
 end
+
+
 
 function toBinary(state)
     power=1
@@ -126,27 +133,36 @@ end
 
 gridSize=GridSize(20,20)
 
-grid=makeGrid(gridSize,3)
+stateL=3
+
+grid=makeGrid(gridSize,stateL)
 
 
-tFinal=100000000
+tFinal=12000
 
-temp=0.1
+temp=0.001
 
-for t in 1:tFinal
+
+anim = @animate for t in 1:tFinal
     r=pick(gridSize)
     neighbours=getNeighbours(gridSize,r)
-    neighbour=getProbs(grid,r,neighbours)
-    grid[r[1],r[2]]=makeCloser(grid[r[1],r[2]],grid[neighbours[neighbour][1],neighbours[neighbour][2]])
-    if t%10000==0
-        counts=countTypes(grid)
-        for c in counts
-            print(c," ")
-        end
-        println()
+    bestN=getBest(grid,r,neighbours)
+    bit=rand(1:stateL)
+    dE=deltaE(grid[r[1],r[2]],grid[neighbours[bestN][1],neighbours[bestN][2]],bit)
+    if rand(Uniform(0.0,1.0))<exp(-dE/temp)
+        grid[r[1],r[2]][bit]*=-1
     end
+
+    
+    if t>10000
+        p=plotGrid(grid)
+    end
+    #savefig(p,"plot_"*string(t)*".png")
+    
 end
 
+
+gif(anim, "animation.gif", fps=200)
 
 
     
