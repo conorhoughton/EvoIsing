@@ -89,13 +89,13 @@ function plotGrid(grid; kwargs...)
     
     for i in 1:sizeG[1]
         for j in 1:sizeG[2]
-            s[i,j]=sum(grid[i,j])
+            s[i,j]=toBinary(grid[i,j])
         end
     end
 
     Plots.heatmap(s,
             colorbar = false, axis = false
-            )
+                  )
     
     
 end
@@ -137,32 +137,51 @@ stateL=3
 
 grid=makeGrid(gridSize,stateL)
 
+tFinal=10000
+tPrint=tFinal-100
 
-tFinal=12000
+temp=0.1
 
-temp=0.001
+println("initial plot")
 
+p = plotGrid(grid)
+savefig("initial.png")
 
-anim = @animate for t in 1:tFinal
-    r=pick(gridSize)
-    neighbours=getNeighbours(gridSize,r)
-    bestN=getBest(grid,r,neighbours)
-    bit=rand(1:stateL)
-    dE=deltaE(grid[r[1],r[2]],grid[neighbours[bestN][1],neighbours[bestN][2]],bit)
-    if rand(Uniform(0.0,1.0))<exp(-dE/temp)
-        grid[r[1],r[2]][bit]*=-1
+println("starting loop")
+
+#anim = @animate for t in 1:tFinal
+
+for t in 1:tFinal
+    if t%100==0
+     	println(t)
+    end
+    global grid
+    oldGrid=copy(grid)
+
+    for x in 1:gridSize.nX
+        for y in 1:gridSize.nY
+            r=[x,y]
+            neighbours=getNeighbours(gridSize,r)
+            bestN=getBest(oldGrid,r,neighbours)
+            bit=rand(1:stateL)
+            dE=deltaE(grid[r[1],r[2]],oldGrid[neighbours[bestN][1],neighbours[bestN][2]],bit)
+            if rand(Uniform(0.0,1.0))<exp(-dE/temp)
+                grid[r[1],r[2]][bit]*=-1
+            end
+        end
+    end
+
+    if t>tPrint
+        p=plotGrid(grid)
+        savefig(p,"plot_"*string(t)*".png")
     end
 
     
-    if t>10000
-        p=plotGrid(grid)
-    end
-    #savefig(p,"plot_"*string(t)*".png")
     
 end
 
 
-gif(anim, "animation.gif", fps=200)
+#gif(anim, "animation.gif", fps=200)
 
 
     
