@@ -100,7 +100,25 @@ function plotGrid(grid; kwargs...)
     
 end
 
+function magnetization(grid)
+    
+    (nX,nY)=size(grid)
 
+    total=0
+
+    for bit in 1:length(grid[1,1])
+        bitTotal=0
+        for x in 1:nX
+            for y in 1:nY
+                bitTotal+=grid[x,y][bit]
+            end
+        end
+        total+=abs(bitTotal)
+    end
+    total
+end
+
+    
 
 function toBinary(state)
     power=1
@@ -138,23 +156,21 @@ stateL=3
 grid=makeGrid(gridSize,stateL)
 
 tFinal=10000
-tPrint=tFinal-100
+tPrint=tFinal+100
 
-temp=0.1
+temp=10.0
 
-println("initial plot")
+#println("initial plot")
 
-p = plotGrid(grid)
-savefig("initial.png")
+#p = plotGrid(grid)
+#savefig("initial.png")
 
-println("starting loop")
+#println("starting loop")
 
 #anim = @animate for t in 1:tFinal
 
 for t in 1:tFinal
-    if t%100==0
-     	println(t)
-    end
+
     global grid
     oldGrid=copy(grid)
 
@@ -176,6 +192,9 @@ for t in 1:tFinal
         savefig(p,"plot_"*string(t)*".png")
     end
 
+    if t%250==0
+        println(magnetization(grid))
+    end
     
     
 end
