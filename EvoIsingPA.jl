@@ -97,14 +97,6 @@ function deltaE(state1,state2,bit)
     state1[bit]*state2[bit]/length(state1)
 end
 
-function bigE(state1,state2)
-    bigE=(0.5*length(state1))::Float64
-    for i in 1:length(state1)
-        bigE+=-0.5*state1[i]*state2[i]
-    end
-    bigE/length(state1)
-end
-
 function getBest(grid,pos,neighbours)
 
     eValues=[bigE(grid[neighbours[i][1],neighbours[i][2]],grid[pos[1],pos[2]]) for i in 1:length(neighbours)]
