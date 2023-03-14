@@ -1,0 +1,1 @@
+awk '{a=0;for(i=2;i<=11;i++){a+=($i-$12)^2};{print $1,$12+sqrt(a),$12-sqrt(a),$12}}'  < ord_v_temp_la1.0.txt > ord.txt
