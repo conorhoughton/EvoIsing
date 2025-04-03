@@ -1,0 +1,25 @@
+
+
+Afrikaans, 6200000, 1991
+English, 3500000, 1991
+Ndebele, 452000, 1990
+Sepedi, 3000000, 1991
+Sesotho, 2004000, 1990
+Setswana, 2424000, 1987
+Swazi, 854000, 1980
+Tshivenda, 513000, 1987
+Xhosa, 6500000, 1991
+Xitsonga, 1565000, 1990
+Zulu, 8500000, 1991
+
+Afrikaans, 7240000, 2020
+English, 5690000, 2020
+Ndebele, 1090000, 2011
+Sepedi, 4620000, 2013
+Sesotho, 3850000, 2013
+Setswana, 4070000, 2013
+Swazi, 1300000, 2013
+Tschivenda, 1210000, 2013
+Xitsonga,  2280000, 2013
+Xhosa,  8150000, 2013
+Zulu, 11600000, 2013
